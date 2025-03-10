@@ -1,100 +1,97 @@
-let valorDisplay = '0';
-let valorOperacion = '';
-let operacionPendiente = null;
-let primerOperando = null;
-let esperandoSegundoOperando = false;
-let operadorActivo = false;
-let nuevoNumeroDespuesDeResultado = false;
+let valorPantalla = '0';
+let operacionEnCurso = '';
+let operacionActual = null;
+let primerNumero = null;
+let esperandoSegundoNumero = false;
+let operadorPresionado = false;
+let numResultado = false;
 
-const display = document.getElementById('display');
+const pantalla = document.getElementById('pantalla');
 const operacion = document.getElementById('operacion');
 
-function actualizarDisplay() {
-    display.value = valorDisplay;
-    operacion.value = valorOperacion;
+function actualizarPantalla() {
+    pantalla.value = valorPantalla;
+    operacion.value = operacionEnCurso;
 }
 
 function agregarNumero(numero) {
-    if (nuevoNumeroDespuesDeResultado) {
-        valorDisplay = numero;
-        valorOperacion = '';
-        primerOperando = null;
-        operacionPendiente = null;
-        esperandoSegundoOperando = false;
-        nuevoNumeroDespuesDeResultado = false;
-    } else if (esperandoSegundoOperando) {
-        valorDisplay = numero;
-        esperandoSegundoOperando = false;
+    if (numResultado) {
+        valorPantalla = numero;
+        operacionEnCurso = '';
+        primerNumero = null;
+        operacionActual = null;
+        esperandoSegundoNumero = false;
+        numResultado = false;
+    } else if (esperandoSegundoNumero) {
+        valorPantalla = numero;
+        esperandoSegundoNumero = false;
     } else {
-        valorDisplay = valorDisplay === '0' ? numero : valorDisplay + numero;
+        valorPantalla = valorPantalla === '0' ? numero : valorPantalla + numero;
     }
-    operadorActivo = false;
-    actualizarDisplay();
+    operadorPresionado = false;
+    actualizarPantalla();
 }
 
 function agregarOperador(operador) {
-    if (operadorActivo) return;
-    const valorEntrada = parseFloat(valorDisplay);
-    if (primerOperando === null) {
-        valorOperacion = valorDisplay + ' ' + operador + ' ';
-        primerOperando = valorEntrada;
-    } else if (operacionPendiente) {
-        valorOperacion = primerOperando + ' ' + operador + ' ';
-        const resultado = calcularOperacion(primerOperando, valorEntrada, operacionPendiente);
-        valorDisplay = String(resultado);
-        primerOperando = resultado;
+    if (operadorPresionado) return;
+    const numeroEntrada = parseFloat(valorPantalla);
+    if (primerNumero === null) {
+        primerNumero = numeroEntrada;
+    } else if (operacionActual) {
+        primerNumero = realizarOperacion(primerNumero, numeroEntrada, operacionActual);
+        valorPantalla = String(primerNumero);
     }
-    esperandoSegundoOperando = true;
-    operacionPendiente = operador;
-    operadorActivo = true;
-    nuevoNumeroDespuesDeResultado = false;
-    actualizarDisplay();
+    operacionEnCurso = valorPantalla + ' ' + operador;
+    operacionActual = operador;
+    esperandoSegundoNumero = true;
+    operadorPresionado = true;
+    numResultado = false;
+    actualizarPantalla();
 }
 
 function calcular() {
-    if (!operacionPendiente || esperandoSegundoOperando) {
-        return;
-    }
-    const valorEntrada = parseFloat(valorDisplay);
-    valorOperacion = primerOperando + ' ' + operacionPendiente + ' ' + valorEntrada + ' =';
-    const resultado = calcularOperacion(primerOperando, valorEntrada, operacionPendiente);
-    valorDisplay = String(resultado);
-    operacionPendiente = null;
-    primerOperando = resultado;
-    esperandoSegundoOperando = true;
-    nuevoNumeroDespuesDeResultado = true;
-    actualizarDisplay();
+    if (!operacionActual || esperandoSegundoNumero) return;
+    const numeroEntrada = parseFloat(valorPantalla);
+    operacionEnCurso += ' ' + numeroEntrada + ' =';
+    valorPantalla = String(realizarOperacion(primerNumero, numeroEntrada, operacionActual));
+    primerNumero = parseFloat(valorPantalla);
+    operacionActual = null;
+    esperandoSegundoNumero = true;
+    numResultado = true;
+    actualizarPantalla();
 }
 
-function calcularOperacion(num1, num2, operacion) {
+function realizarOperacion(num1, num2, operacion) {
     switch (operacion) {
         case '+': return num1 + num2;
         case '-': return num1 - num2;
         case '*': return num1 * num2;
-        case '/': return num2 !== 0 ? num1 / num2 : (alert('No se puede dividir por cero'), limpiar(), 0);
+        case '/': 
+            if (num2 === 0) {
+                alert('No se puede dividir por cero');
+                limpiar();
+                return 0;
+            }
+            return num1 / num2;
         default: return num2;
     }
 }
 
 function limpiar() {
-    valorDisplay = '0';
-    valorOperacion = '';
-    primerOperando = null;
-    operacionPendiente = null;
-    esperandoSegundoOperando = false;
-    operadorActivo = false;
-    nuevoNumeroDespuesDeResultado = false;
-    actualizarDisplay();
+    valorPantalla = '0';
+    operacionEnCurso = '';
+    primerNumero = null;
+    operacionActual = null;
+    esperandoSegundoNumero = false;
+    operadorPresionado = false;
+    numResultado = false;
+    actualizarPantalla();
 }
 
 function borrar() {
-    if (esperandoSegundoOperando) return;
-    if (valorDisplay.length > 1) {
-        valorDisplay = valorDisplay.slice(0, -1);
-    } else {
-        valorDisplay = '0';
-    }
-    actualizarDisplay();
+    if (esperandoSegundoNumero) return;
+    valorPantalla = valorPantalla.length > 1 ? valorPantalla.slice(0, -1) : '0';
+    actualizarPantalla();
 }
 
-actualizarDisplay();
+actualizarPantalla();

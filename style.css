@@ -19,11 +19,11 @@ body {
     padding: 20px;
     box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
     width: 320px;
-    border: 2px solid white;
+    border: 2px solid rgb(255, 255, 255);
     text-align: center;
 }
 
-.display-container {
+.pantalla-contenedor {
     width: 100%;
     background-color: #444;
     border-radius: 5px;
@@ -31,10 +31,10 @@ body {
     padding: 10px;
     text-align: right;
 }
-.operacion, .display {
+.operacion, .pantalla {
     width: 100%;
     background-color: #444;
-    color: white;
+    color: rgb(255, 255, 255);
     text-align: right;
     border: none;
     padding: 5px;
@@ -45,7 +45,7 @@ body {
     font-size: 1rem;
     opacity: 0.7;
 }
-.display {
+.pantalla {
     font-size: 2.5rem;
     font-weight: bold;
 }
@@ -67,22 +67,18 @@ button:hover {
 }
 .numero {
     background-color: #555;
-    color: white;
+    color: rgb(255, 255, 255);
 }
 .operador {
     background-color: #ff9500;
-    color: white;
+    color: rgb(255, 255, 255);
 }
 .igual {
     background-color: #ff9500;
-    color: white;
+    color: rgb(255, 255, 255);
     grid-column: span 2;
 }
-.limpiar {
-    background-color: #a5a5a5;
-    color: black;
-}
-.especial {
+.limpiar, .borrar {
     background-color: #a5a5a5;
     color: black;
 }
